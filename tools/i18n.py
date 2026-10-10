@@ -311,6 +311,9 @@ def cmd_update(_args=None):
 
 
 def cmd_check(_args=None):
+    """Проверка по СМЫСЛУ, а не по оформлению: .pot/.po можно править в любом редакторе
+    (Poedit и т.п. меняют порядок записей, переносы строк, #: и флаги) -- важно только,
+    чтобы каждая строка из JS в них была, а переводы были согласованы с оригиналом."""
     found, warns = extract()
     bad = 0
     for w in warns:
@@ -319,20 +322,45 @@ def cmd_check(_args=None):
         for p in lint(k):
             bad += 1
             print('ОШИБКА %s:%d: %s -> %r' % (refs[0][0], refs[0][1], p, k))
+
+    # --- шаблон .pot ---
+    pot_entries, _ = parse_po(POT)
+    pot_ids = {e['id'] for e in pot_entries if e['id'] != ''}
+    if not pot_ids:
+        bad += 1
+        print('ОШИБКА: %s не найден или пуст (выполните python3 tools/i18n.py update)' % os.path.relpath(POT, ROOT))
+    else:
+        for k in found:
+            if k not in pot_ids:
+                bad += 1
+                print('ОШИБКА: нет в .pot (выполните python3 tools/i18n.py update): %r' % k)
+        stale = [k for k in pot_ids if k not in found]
+        print('[pot] строк в JS: %d, в .pot: %d, лишних в .pot: %d' % (len(found), len(pot_ids), len(stale)))
+        for k in stale:
+            print('    лишняя в .pot (в JS её уже нет):', k)
+
+    # --- переводы .po ---
     for lang in langs():
         entries, _ = parse_po(os.path.join(PO_DIR, lang, DOMAIN + '.po'))
         tr = {e['id']: e['str'] for e in entries if e['id'] != ''}
-        miss = [k for k in found if not tr.get(k)]
+        absent = [k for k in found if k not in tr]               # записи нет вообще -> ошибка
+        empty = [k for k in found if k in tr and not tr[k]]       # запись есть, перевод пуст -> предупреждение
         extra = [k for k in tr if k not in found]
+        for k in absent:
+            bad += 1
+            print('ОШИБКА [%s] нет в .po (выполните python3 tools/i18n.py update): %r' % (lang, k))
         for k in found:
             if tr.get(k) and k.count('%s') + k.count('%d') != tr[k].count('%s') + tr[k].count('%d'):
                 bad += 1; print('ОШИБКА [%s] разное число %%s/%%d: %r' % (lang, k))
             if tr.get(k) and ('<' in tr[k]) != ('<' in k):
                 bad += 1; print('ОШИБКА [%s] HTML-теги не совпадают: %r' % (lang, k))
+        done = len(found) - len(absent) - len(empty)
         print('[%s] строк в JS: %d, переведено: %d, без перевода: %d, лишних в .po: %d' %
-              (lang, len(found), len(found) - len(miss), len(miss), len(extra)))
-        for k in miss:
+              (lang, len(found), done, len(absent) + len(empty), len(extra)))
+        for k in empty:
             print('    нет перевода:', k)
+        for k in extra:
+            print('    лишняя в .po (в JS её уже нет):', k)
     print('Проблем: %d' % bad)
     return 1 if bad else 0
 
