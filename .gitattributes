@@ -1,0 +1,6 @@
+# Скрипты и конфиги исполняются на роутере: окончания строк всегда LF
+# (иначе при коммите с Windows init-скрипт получит CRLF и не запустится).
+* text=auto eol=lf
+*.ipk binary
+*.apk binary
+*.lmo binary

@@ -1,0 +1,611 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: luci-app-opera-proxy\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/main.js
+msgid "Opera Proxy"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/main.js
+msgid "Opera Proxy for OpenWrt with LuCI control panel, runtime status, colored mode badge and built-in upstream proxy test."
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/main.js
+msgid "Status"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/main.js
+msgid "Settings"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/main.js
+msgid "Diagnostics"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "MB"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "%ds"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "%dm %ds"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "%dh %dm"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "%dd %dh"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Service state"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "PID:"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "RSS:"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Running"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Stopped"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Proxy mode"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Listen:"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Country:"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Memory"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Free:"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Uptime:"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Enabled"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Disabled"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Status read failed:"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "unknown error"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Start"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Stop"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Restart"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Executing action: %s ..."
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Last action completed: %s"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Operation failed"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Testing proxy via %s %s ..."
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Empty response from test target"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Proxy test succeeded. Exit IP: %s"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Proxy test failed"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Disabling autostart ..."
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Enabling autostart ..."
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Autostart disabled."
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Autostart enabled."
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Runtime state"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Loading status..."
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Actions"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Start service"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Restart service"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Stop service"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Enable service"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Test proxy connection"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "Test proxy"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/status.js
+msgid "No action executed yet"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Expecting a duration with a unit, e.g. 30s, 1m30s or 4h"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Expecting an integer greater than 0"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Expecting a URL starting with http:// or https://"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Expecting scheme://[login:password@]host[:port], where scheme is http, https, socks5 or socks5h"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Expecting a domain name, e.g. example.com"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Each entry must start with dns://, https://, tls:// or tcp:// and contain no spaces or commas"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Each pattern must not contain spaces, commas or quotes"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "General"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "API"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Proxy"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Server"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "HTTP"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "SOCKS5"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Proxy server mode (default \"HTTP\")"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Listen address"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Proxy listen address (default \"127.0.0.1:18080\")"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Country"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "EU - Europe"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "AM - Americas"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "AS - Asia"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Desired proxy location (default \"EU\")"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Bootstrap DNS"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "List of DNS/DoH/DoT resolvers for initial discovery of SurfEasy API address"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Supported schemes are: dns://, https://, tls://, tcp://"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Examples: https://1.1.1.1/dns-query, tls://9.9.9.9:853"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Leave empty to use the built-in list:"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "CA file"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Use custom CA certificate bundle file"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Fake SNI"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Domain name to use as SNI in outbound TLS and tunneled TLS ClientHello where possible"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Init retries"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Number of attempts for initialization steps (0 = unlimited)"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Init retry interval"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Delay between initialization retries (default 5s)"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Discover repeat"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Number of repeated discover requests to aggregate and deduplicate (default 1)"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Verbosity"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "10 - debug"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "20 - info"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "30 - warning"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "40 - error"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "50 - critical"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "60 - silent (no output)"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Logging verbosity (default 20 - info)"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "API address override"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Override IP address of api2.sec-tunnel.com"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "API client type"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Client type reported to SurfEasy API (default \"se0316\")"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "API client version"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Client version reported to SurfEasy API (default \"Stable 114.0.5282.21\")"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "API login"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "SurfEasy API login (default \"se0316\")"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "API password"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "SurfEasy API password (default \"SILrMEPBmJuhomxWkfm3JalqHX2Eheg1YhlEZiMh8II\")"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "API user agent"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "User agent reported to SurfEasy API"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "(default \"%s\")"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "API proxy"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Additional proxy server used to access SurfEasy API"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Format: &lt;http|https|socks5|socks5h&gt;://[login:password@]host[:port]."
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "API proxy candidates file"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Path to text file with candidate proxy servers for SurfEasy API access, one per line;"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Proxies are tried in order until init/discover succeeds"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "API proxy list URL"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "URL of a text file with candidate proxy servers for SurfEasy API access;"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Falls back to the candidates file above if download fails"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "API proxy parallel tests"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Number of API proxy candidates tested in parallel when the candidates file is used (default 15)"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Upstream proxy"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Sets base proxy to use for all dial-outs."
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Examples: http://user:password@192.168.1.1:3128, socks5://10.0.0.1:1080"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Override proxy address"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Use fixed proxy address instead of server address returned by SurfEasy API"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Proxy blacklist file"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Path to file with blacklisted proxy addresses, one host[:port] per line"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Proxy bypass"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "List of destination host or URL patterns that should bypass proxying and connect directly;"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Matching is case-insensitive and supports * in hostnames"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Server selection"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "fastest"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "first"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "random"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Server selection policy (first/random/fastest) (default fastest)"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Server selection timeout"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Timeout given for server selection function to produce result (default 1m0s)"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Server selection download limit"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Restrict amount of downloaded data per connection by fastest server selection (0 = unlimited)"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Server selection test URL"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "URL used for download benchmark by fastest server selection policy"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Endpoint refresh interval"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Login refresh interval (default 4h0m0s)"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Refresh retry interval"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Login refresh retry interval (default 5s)"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Request timeout"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js
+msgid "Timeout for network operations (default 30s)"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/diag.js
+msgid "No opera-proxy log entries yet."
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/diag.js
+msgid "Unable to read logs."
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/diag.js
+msgid "Service is not running"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/diag.js
+msgid "Instance is registered but not running"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/diag.js
+msgid "Unable to read the service command line"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/diag.js
+msgid "New entries"
+msgstr ""
+
+#: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/diag.js
+msgid "Service command line"
+msgstr ""
