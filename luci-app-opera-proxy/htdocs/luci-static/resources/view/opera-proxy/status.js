@@ -242,19 +242,19 @@ return L.Class.extend({
         var running = !!runtime.pid;
         var modeColor = !running ? COLORS.gray : (runtime.mode === 'SOCKS5' ? COLORS.blue : COLORS.green);
 
-        var card1 = statusCard(_('Service state'), [
+        var card1 = statusCard(_('SERVICE STATE'), [
             '<div><strong>' + escapeHtml(_('PID:')) + '</strong> ' + escapeHtml(runtime.pid || '-') + '</div>',
             '<div style="margin-top:4px"><strong>' + escapeHtml(_('RSS:')) + '</strong> ' + formatKBToMB(runtime.vmrss) + '</div>',
             '<div style="margin-top:10px">' + badge(running ? _('Running') : _('Stopped'), running ? COLORS.green : COLORS.red) + '</div>'
         ].join(''));
 
-        var card2 = statusCard(_('Proxy mode'), [
+        var card2 = statusCard(_('PROXY MODE'), [
             '<div><strong>' + escapeHtml(_('Listen:')) + '</strong> ' + escapeHtml(runtime.bind) + '</div>',
             '<div style="margin-top:4px"><strong>' + escapeHtml(_('Country:')) + '</strong> ' + escapeHtml(runtime.country) + '</div>',
             '<div style="margin-top:10px">' + badge(runtime.mode, modeColor, '64px') + '</div>'
         ].join(''));
 
-        var card3 = statusCard(_('Memory'), [
+        var card3 = statusCard(_('MEMORY'), [
             '<div><strong>' + escapeHtml(_('RSS:')) + '</strong> ' + formatKBToMB(runtime.vmrss) + '</div>',
             '<div style="margin-top:4px"><strong>' + escapeHtml(_('Free:')) + '</strong> ' + formatKBToMB(runtime.freeMem) + '</div>',
             '<div style="margin-top:4px"><strong>' + escapeHtml(_('Uptime:')) + '</strong> ' + formatUptime(runtime.uptime) + '</div>'
@@ -416,7 +416,7 @@ return L.Class.extend({
                     return self.refreshStatus();
                 })
                 .then(function() {
-                    self.setActionState(false, isEnabled ? _('Autostart disabled.') : _('Autostart enabled.'), 'success');
+                    self.setActionState(false, isEnabled ? _('Autostart disabled') : _('Autostart enabled'), 'success');
                 })
                 .catch(function(err) {
                     var msg = (err && err.message) ? err.message : _('Operation failed');
