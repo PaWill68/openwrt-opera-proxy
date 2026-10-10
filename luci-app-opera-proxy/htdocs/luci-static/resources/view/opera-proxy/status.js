@@ -481,7 +481,7 @@ return L.Class.extend({
                   actionRow(_('Restart service'),          'restart',        _('Restart')),
                   actionRow(_('Stop service'),             'stop',           _('Stop'),      'cbi-button-remove'),
                   actionRow(_('Enable service'),           'toggle_enabled', '...'),
-                  actionRow(_('Test proxy connection'),    'test',           _('Test proxy'),'cbi-button-action important'),
+                  actionRow(_('Test proxy connection'),    'test',           _('Test'),'cbi-button-action important'),
                 '</div>',
                 '<div class="cbi-value">',
                   '<label class="cbi-value-title"></label>',
