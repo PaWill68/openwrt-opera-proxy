@@ -585,7 +585,7 @@ msgstr "Server selection download limit"
 
 #: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js:384
 msgid "Restrict amount of downloaded data per connection by fastest server selection (0 = unlimited)"
-msgstr "Ограничение объёма данных, загружаемых за одно соединение при выборе самого быстрого сервера (0 — без ограничений)"
+msgstr "Ограничение объёма данных, загружаемых за одно соединение при выборе самого быстрого сервера (0 - без ограничений)"
 
 #: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js:387
 msgid "Server selection test URL"
@@ -628,8 +628,8 @@ msgid "No opera-proxy log entries yet"
 msgstr "В журнале пока нет записей opera-proxy"
 
 #: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/diag.js:139
-msgid "Unable to read logs."
-msgstr "Не удалось прочитать журнал."
+msgid "Unable to read logs"
+msgstr "Не удалось прочитать журнал"
 
 #: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/diag.js:161
 msgid "Service is not running"
