@@ -306,7 +306,7 @@ return L.Class.extend({
         o.placeholder = 'socks5://127.0.0.1:1080';
         o.rmempty = true;
         o.description = _('Additional proxy server used to access SurfEasy API') + '<br>' +
-            _('Format: &lt;http|https|socks5|socks5h&gt;://[login:password@]host[:port].');
+            _('Format: &lt;http|https|socks5|socks5h&gt;://[login:password@]host[:port]');
 
         o = ss.taboption('api', form.Value, 'api_proxy_file', _('API proxy candidates file'));
         o.datatype = 'string';
@@ -337,8 +337,8 @@ return L.Class.extend({
         o.datatype = 'string';
         o.placeholder = 'socks5://127.0.0.1:1080';
         o.rmempty = true;
-        o.description = _('Sets base proxy to use for all dial-outs.') + '<br>' +
-            _('Format: &lt;http|https|socks5|socks5h&gt;://[login:password@]host[:port].') + '<br>' +
+        o.description = _('Sets base proxy to use for all dial-outs') + '<br>' +
+            _('Format: &lt;http|https|socks5|socks5h&gt;://[login:password@]host[:port]') + '<br>' +
             _('Examples: http://user:password@192.168.1.1:3128, socks5://10.0.0.1:1080');
 
         o = ss.taboption('proxy', form.Value, 'override_proxy_address', _('Override proxy address'));
