@@ -115,7 +115,7 @@ return L.Class.extend({
 
         return L.resolveDefault(this._fs.exec_direct('/sbin/logread', ['-e', SERVICE_NAME], 'text'), '')
             .then(function(output) {
-                var text = String(output || '').trim() || _('No opera-proxy log entries yet.');
+                var text = String(output || '').trim() || _('No opera-proxy log entries yet');
 
                 if (text === self._logNode.value) {
                     self._pendingText = null;
@@ -136,7 +136,7 @@ return L.Class.extend({
             .catch(function(err) {
                 if (!self._logNode)
                     return;
-                self._logNode.value = (err && err.message) ? err.message : _('Unable to read logs.');
+                self._logNode.value = (err && err.message) ? err.message : _('Unable to read logs');
             });
     },
 
