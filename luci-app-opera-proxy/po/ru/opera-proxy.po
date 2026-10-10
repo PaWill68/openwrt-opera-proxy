@@ -466,8 +466,8 @@ msgstr "Дополнительный прокси-сервер для досту
 
 #: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js:309
 #: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js:343
-msgid "Format: &lt;http|https|socks5|socks5h&gt;://[login:password@]host[:port]."
-msgstr "Формат: &lt;http|https|socks5|socks5h&gt;://[логин:пароль@]хост[:порт]."
+msgid "Format: &lt;http|https|socks5|socks5h&gt;://[login:password@]host[:port]"
+msgstr "Формат: &lt;http|https|socks5|socks5h&gt;://[логин:пароль@]хост[:порт]"
 
 #: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js:311
 msgid "API proxy candidates file"
@@ -510,8 +510,8 @@ msgstr "Upstream proxy"
 #msgstr "Вышестоящий прокси"
 
 #: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js:340
-msgid "Sets base proxy to use for all dial-outs."
-msgstr "Базовый прокси для всех исходящих подключений."
+msgid "Sets base proxy to use for all dial-outs"
+msgstr "Базовый прокси для всех исходящих подключений"
 
 #: luci-app-opera-proxy/htdocs/luci-static/resources/view/opera-proxy/settings.js:342
 msgid "Examples: http://user:password@192.168.1.1:3128, socks5://10.0.0.1:1080"
