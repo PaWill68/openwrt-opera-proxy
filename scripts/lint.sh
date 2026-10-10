@@ -72,12 +72,13 @@ for m in opera-proxy/Makefile $APP/Makefile; do
 done
 
 echo "== i18n"
-python3 tools/i18n.py update >/dev/null || bad "tools/i18n.py update"
-python3 tools/i18n.py check | sed 's/^/  /' ; [ "${PIPESTATUS[0]}" -eq 0 ] && ok "строки корректны" || bad "i18n check"
-if git rev-parse --is-inside-work-tree >/dev/null 2>&1 && git ls-files --error-unmatch $APP/po >/dev/null 2>&1; then
-    git diff --quiet -- $APP/po && ok ".pot/.po синхронны с JS" \
-        || bad ".pot/.po не синхронны с JS: выполните 'python3 tools/i18n.py update' и закоммитьте"
-fi
+# Проверка по смыслу (tools/i18n.py check): каждая строка из JS есть в .pot и в .po, переводы
+# согласованы с оригиналом. Оформление файлов не сверяется -- .po/.pot можно править в Poedit и т.п.
+# Файлы эта проверка не меняет. Если строки в JS добавлены или изменены:
+#   python3 tools/i18n.py update    # дописать новые строки в .pot/.po, затем перевести
+python3 tools/i18n.py check | sed 's/^/  /'
+[ "${PIPESTATUS[0]}" -eq 0 ] && ok ".pot/.po содержат все строки из JS, переводы согласованы" \
+    || bad "i18n: см. выше (после правки строк в JS выполните 'python3 tools/i18n.py update')"
 
 echo
 [ "$fail" -eq 0 ] && echo "ВСЕ ПРОВЕРКИ ПРОЙДЕНЫ" || echo "ЕСТЬ ОШИБКИ"
