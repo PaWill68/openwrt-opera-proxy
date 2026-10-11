@@ -30,7 +30,7 @@ on:
         required: false
         default: "1"
       upx_mode:
-        description: "Сжатие бинарника UPX: auto (только для mips/arm), always, never"
+        description: "Сжатие бинарника UPX: auto, always, never"
         type: choice
         options: [auto, always, never]
         default: auto
@@ -114,8 +114,8 @@ jobs:
           - { arch: mipsel_24kc,              goarch: mipsle, gomips: softfloat, goarm: "",  upx: "true"  }
           - { arch: mips_24kc,                goarch: mips,   gomips: softfloat, goarm: "",  upx: "true"  }
           - { arch: arm_cortex-a7_neon-vfpv4, goarch: arm,    gomips: "",        goarm: "7", upx: "true"  }
-          - { arch: aarch64_cortex-a53,       goarch: arm64,  gomips: "",        goarm: "",  upx: "false" }
-          - { arch: x86_64,                   goarch: amd64,  gomips: "",        goarm: "",  upx: "false" }
+          - { arch: aarch64_cortex-a53,       goarch: arm64,  gomips: "",        goarm: "",  upx: "true" }
+          - { arch: x86_64,                   goarch: amd64,  gomips: "",        goarm: "",  upx: "true" }
     steps:
       - name: Исходники upstream
         uses: actions/checkout@v4
