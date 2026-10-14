@@ -1,0 +1,96 @@
+#!/bin/sh /etc/rc.common
+
+START=95
+STOP=15
+USE_PROCD=1
+
+SERVICE_NAME="opera-proxy"
+PROG="/usr/bin/opera-proxy"
+CFG="opera-proxy"
+
+service_triggers() {
+    procd_add_reload_trigger "$CFG"
+}
+
+# Скалярная опция: передаём флаг только если значение задано в UCI.
+# Иначе бинарник сам использует собственное значение по умолчанию.
+#   $1 - имя опции в UCI, $2 - флаг командной строки
+_opt() {
+    local value
+    config_get value main "$1" ''
+    [ -n "$value" ] && procd_append_param command "$2" "$value"
+    return 0
+}
+
+# Опция-список (option list): бинарник ждёт одну строку через запятую.
+#   $1 - имя опции в UCI, $2 - флаг командной строки
+_csv=""
+_csv_add() {
+    _csv="${_csv:+$_csv,}$1"
+}
+_list_opt() {
+    _csv=""
+    config_list_foreach main "$1" _csv_add
+    [ -n "$_csv" ] && procd_append_param command "$2" "$_csv"
+    return 0
+}
+
+start_service() {
+    local socks_mode
+
+    config_load "$CFG"
+
+    procd_open_instance
+    procd_set_param command "$PROG"
+
+    # General
+    config_get socks_mode main socks_mode ''
+    case "$socks_mode" in
+        1|on|true|yes) procd_append_param command -socks-mode ;;
+    esac
+    _opt bind_address               -bind-address
+    _opt country                    -country
+    _list_opt bootstrap_dns         -bootstrap-dns
+    _opt cafile                     -cafile
+    _opt fake_sni                   -fake-SNI
+    _opt init_retries               -init-retries
+    _opt init_retry_interval        -init-retry-interval
+    _opt discover_repeat            -discover-repeat
+    _opt verbosity                  -verbosity
+
+    # API
+    _opt api_address                -api-address
+    _opt api_client_type            -api-client-type
+    _opt api_client_version         -api-client-version
+    _opt api_login                  -api-login
+    _opt api_password               -api-password
+    _opt api_user_agent             -api-user-agent
+    _opt api_proxy                  -api-proxy
+    _opt api_proxy_file             -api-proxy-file
+    _opt api_proxy_list_url         -api-proxy-list-url
+    _opt api_proxy_parallel         -api-proxy-parallel
+
+    # Proxy
+    _opt proxy                      -proxy
+    _opt override_proxy_address     -override-proxy-address
+    _opt proxy_blacklist            -proxy-blacklist
+    _list_opt proxy_bypass          -proxy-bypass
+
+    # Server
+    _opt server_selection           -server-selection
+    _opt server_selection_timeout   -server-selection-timeout
+    _opt server_selection_dl_limit  -server-selection-dl-limit
+    _opt server_selection_test_url  -server-selection-test-url
+    _opt refresh                    -refresh
+    _opt refresh_retry              -refresh-retry
+    _opt timeout                    -timeout
+
+    procd_set_param respawn 3600 5 5
+    procd_set_param stdout 1
+    procd_set_param stderr 1
+    procd_close_instance
+}
+
+stop_service() {
+    return 0
+}

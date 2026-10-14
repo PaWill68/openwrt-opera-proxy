@@ -1,0 +1,297 @@
+name: Build packages
+
+# Что делает:
+#   lint     -- проверки репозитория (на каждый push/PR);
+#   prepare  -- определяет версию upstream и номер ревизии пакета;
+#   binary   -- собирает бинарник opera-proxy из исходников Alexey71/opera-proxy под каждую архитектуру;
+#   package  -- упаковывает бинарник + init + config и LuCI-приложение (+ русский перевод)
+#               в .ipk (OpenWrt 24.10) и .apk (OpenWrt 25.12) через OpenWrt SDK;
+#   release  -- публикует все файлы в GitHub Release.
+#
+# Запуск:
+#   * тег vX.Y.Z или vX.Y.Z-N  (X.Y.Z -- версия upstream, N -- ревизия пакета, по умолчанию 1);
+#   * вручную: Actions -> Build packages -> Run workflow.
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-[0-9]+"
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      upstream_tag:
+        description: "Тег Alexey71/opera-proxy (пусто = самый свежий v*)"
+        required: false
+        default: ""
+      pkg_release:
+        description: "Ревизия пакета (PKG_RELEASE)"
+        required: false
+        default: "1"
+      upx_mode:
+        description: "Сжатие бинарника UPX: auto (только для mips/arm), always, never"
+        type: choice
+        options: [auto, always, never]
+        default: always
+      upx_args:
+        description: "Параметры UPX (пусто = переменная репозитория UPX_ARGS, иначе --best --lzma). Максимум сжатия: --ultra-brute"
+        required: false
+        default: ""
+      publish:
+        description: "Создать GitHub Release"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+env:
+  UPSTREAM_REPO: Alexey71/opera-proxy
+  FEEDNAME: opera
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Проверки репозитория
+        run: bash scripts/lint.sh
+
+  prepare:
+    if: github.event_name != 'pull_request'
+    needs: lint
+    runs-on: ubuntu-latest
+    outputs:
+      upstream_tag: ${{ steps.v.outputs.upstream_tag }}
+      version: ${{ steps.v.outputs.version }}
+      release: ${{ steps.v.outputs.release }}
+      release_tag: ${{ steps.v.outputs.release_tag }}
+      publish: ${{ steps.v.outputs.publish }}
+    steps:
+      - name: Определить версии
+        id: v
+        env:
+          IN_UPSTREAM: ${{ inputs.upstream_tag }}
+          IN_RELEASE: ${{ inputs.pkg_release }}
+          IN_PUBLISH: ${{ inputs.publish }}
+        run: |
+          set -euo pipefail
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            [[ "$GITHUB_REF_NAME" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)(-([0-9]+))?$ ]] \
+              || { echo "::error::тег '$GITHUB_REF_NAME' не похож на vX.Y.Z[-N]"; exit 1; }
+            up="v${BASH_REMATCH[1]}"
+            rel="${BASH_REMATCH[3]:-1}"
+            publish=true
+            release_tag="$GITHUB_REF_NAME"
+          else
+            up="$IN_UPSTREAM"
+            rel="${IN_RELEASE:-1}"
+            publish="${IN_PUBLISH:-false}"
+            if [ -z "$up" ]; then
+              up=$(git ls-remote --tags --refs "https://github.com/${UPSTREAM_REPO}.git" 'v*' \
+                     | sed 's|.*refs/tags/||' | sort -V | tail -n1)
+              [ -n "$up" ] || { echo "::error::не удалось определить последний тег $UPSTREAM_REPO"; exit 1; }
+            fi
+            [[ "$up" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::upstream_tag '$up' должен быть вида vX.Y.Z"; exit 1; }
+            [[ "$rel" =~ ^[0-9]+$ ]] || { echo "::error::pkg_release должен быть числом"; exit 1; }
+            if [ "$rel" = 1 ]; then release_tag="$up"; else release_tag="$up-$rel"; fi
+          fi
+          {
+            echo "upstream_tag=$up"
+            echo "version=${up#v}"
+            echo "release=$rel"
+            echo "release_tag=$release_tag"
+            echo "publish=$publish"
+          } >> "$GITHUB_OUTPUT"
+          echo "upstream=$up  version=${up#v}  release=$rel  release_tag=$release_tag  publish=$publish"
+
+  binary:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 90   # --ultra-brute у UPX может считать долго
+    strategy:
+      fail-fast: false
+      matrix:
+        # arch -- архитектура пакетов OpenWrt (должна совпадать с `opkg print-architecture`).
+        # Чтобы добавить архитектуру, добавьте строку здесь и такое же значение в matrix job `package`.
+        include:
+          - { arch: mipsel_24kc,              goarch: mipsle, gomips: softfloat, goarm: "",  upx: "true"  }
+          - { arch: mips_24kc,                goarch: mips,   gomips: softfloat, goarm: "",  upx: "true"  }
+          - { arch: arm_cortex-a7_neon-vfpv4, goarch: arm,    gomips: "",        goarm: "7", upx: "true"  }
+          - { arch: aarch64_cortex-a53,       goarch: arm64,  gomips: "",        goarm: "",  upx: "false" }
+          - { arch: x86_64,                   goarch: amd64,  gomips: "",        goarm: "",  upx: "false" }
+    steps:
+      - name: Исходники upstream
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.UPSTREAM_REPO }}
+          ref: ${{ needs.prepare.outputs.upstream_tag }}
+          path: upstream
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: upstream/go.mod
+          cache: false
+
+      - name: Сборка
+        env:
+          UP_TAG: ${{ needs.prepare.outputs.upstream_tag }}
+          GOARCH_: ${{ matrix.goarch }}
+          GOMIPS_: ${{ matrix.gomips }}
+          GOARM_: ${{ matrix.goarm }}
+        run: |
+          set -euo pipefail
+          export CGO_ENABLED=0 GOOS=linux GOARCH="$GOARCH_"
+          if [ -n "$GOMIPS_" ]; then export GOMIPS="$GOMIPS_"; fi
+          if [ -n "$GOARM_" ];  then export GOARM="$GOARM_";  fi
+          go version
+          ( cd upstream && go build -trimpath -ldflags "-s -w -X main.version=${UP_TAG}" -o ../opera-proxy . )
+          ls -l opera-proxy
+          file opera-proxy || true
+
+      - name: "Проверка версии (только x86_64 — его можно запустить на раннере)"
+        if: matrix.arch == 'x86_64'
+        env:
+          UP_TAG: ${{ needs.prepare.outputs.upstream_tag }}
+        run: |
+          out=$(./opera-proxy -version 2>&1 | head -n1)
+          echo "бинарник сообщает: '$out'"
+          case "$out" in
+            *"$UP_TAG"*) ;;
+            *) echo "::error::версия бинарника '$out' не содержит '$UP_TAG' -- проверьте -X main.version"; exit 1 ;;
+          esac
+
+      - name: UPX
+        env:
+          MODE: ${{ inputs.upx_mode }}
+          MATRIX_UPX: ${{ matrix.upx }}
+          # Приоритет: параметр запуска -> переменная репозитория UPX_ARGS (Settings -> Variables -> Actions) -> значение по умолчанию.
+          UPX_ARGS: ${{ inputs.upx_args || vars.UPX_ARGS || '--best --lzma' }}
+        run: |
+          set -euo pipefail
+          case "${MODE:-auto}" in
+            always) use=true ;;
+            never)  use=false ;;
+            *)      use="$MATRIX_UPX" ;;
+          esac
+          if [ "$use" = true ]; then
+            [[ "$UPX_ARGS" =~ ^[-A-Za-z0-9=[:space:]]+$ ]] \
+              || { echo "::error::недопустимые символы в UPX_ARGS: '$UPX_ARGS'"; exit 1; }
+            sudo apt-get update -qq && sudo apt-get install -y -qq upx-ucl
+            upx --version | head -n1
+            before=$(stat -c%s opera-proxy)
+            echo "upx $UPX_ARGS"
+            # shellcheck disable=SC2086
+            upx $UPX_ARGS opera-proxy
+            upx -t opera-proxy
+            after=$(stat -c%s opera-proxy)
+            echo "UPX: $before -> $after байт (${{ matrix.arch }})"
+            echo "UPX ${{ matrix.arch }}: $before -> $after байт (upx $UPX_ARGS)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "UPX отключён для ${{ matrix.arch }}"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bin-${{ matrix.arch }}
+          path: opera-proxy
+          if-no-files-found: error
+          retention-days: 7
+
+  package:
+    needs: [prepare, binary]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # ver: 24.10 -> .ipk, 25.12 -> .apk.
+        # sdk: часть тега Docker-образа openwrt/sdk: <arch>-<sdk> (ветка openwrt-XX.YY всегда указывает
+        #      на последний релиз ветки). Если образ не находится, подставьте точную версию, напр. "24.10.5".
+        owrt:
+          - { ver: "24.10", sdk: "openwrt-24.10" }
+          - { ver: "25.12", sdk: "openwrt-25.12" }
+        arch:
+          - mipsel_24kc
+          - mips_24kc
+          - arm_cortex-a7_neon-vfpv4
+          - aarch64_cortex-a53
+          - x86_64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: bin-${{ matrix.arch }}
+          path: opera-proxy/bin
+
+      - name: Подготовить пакеты (версия, права на бинарник)
+        env:
+          VER: ${{ needs.prepare.outputs.version }}
+          REL: ${{ needs.prepare.outputs.release }}
+        run: |
+          set -euo pipefail
+          chmod 0755 opera-proxy/bin/opera-proxy
+          # Версия и ревизия задаются отдельно: SDK сам собирает "<версия>-r<ревизия>".
+          for m in opera-proxy/Makefile luci-app-opera-proxy/Makefile; do
+            sed -i -e "s/^PKG_VERSION:=.*/PKG_VERSION:=${VER}/" -e "s/^PKG_RELEASE:=.*/PKG_RELEASE:=${REL}/" "$m"
+          done
+          grep -HE '^PKG_(VERSION|RELEASE|PO_VERSION):=' opera-proxy/Makefile luci-app-opera-proxy/Makefile
+
+      - name: OpenWrt SDK
+        uses: openwrt/gh-action-sdk@main
+        env:
+          ARCH: ${{ matrix.arch }}-${{ matrix.owrt.sdk }}
+          FEEDNAME: ${{ env.FEEDNAME }}
+          PACKAGES: opera-proxy luci-app-opera-proxy
+          # По умолчанию действие проверяет init-скрипты через shfmt (табы вместо пробелов) и
+          # необходимость refresh патчей -- это правила репозитория openwrt/packages, не наши.
+          NO_SHFMT_CHECK: "1"
+          NO_REFRESH_CHECK: "1"
+
+      - name: Собрать результат
+        env:
+          VER: ${{ needs.prepare.outputs.version }}
+          REL: ${{ needs.prepare.outputs.release }}
+        run: bash scripts/collect-packages.sh "bin/packages/${{ matrix.arch }}/${FEEDNAME}" "${{ matrix.arch }}" dist "${VER}-r${REL}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pkg-${{ matrix.owrt.ver }}-${{ matrix.arch }}
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    if: needs.prepare.outputs.publish == 'true'
+    needs: [prepare, package]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: pkg-*
+          merge-multiple: true
+          path: dist
+
+      - name: Контрольные суммы и описание релиза
+        env:
+          VER: ${{ needs.prepare.outputs.version }}
+          REL: ${{ needs.prepare.outputs.release }}
+          UP: ${{ needs.prepare.outputs.upstream_tag }}
+        run: |
+          set -euo pipefail
+          ( cd dist && sha256sum -- * > SHA256SUMS && cat SHA256SUMS )
+          bash scripts/release-notes.sh "$VER" "$REL" "$UP" > release-notes.md
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.prepare.outputs.release_tag }}
+          name: opera-proxy ${{ needs.prepare.outputs.version }}-r${{ needs.prepare.outputs.release }}
+          body_path: release-notes.md
+          files: dist/*
+          fail_on_unmatched_files: true
