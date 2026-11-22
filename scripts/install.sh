@@ -2,15 +2,15 @@
 # Установка opera-proxy + LuCI + русский перевод из релиза GitHub.
 # Сам определяет менеджер пакетов (opkg -> .ipk, apk -> .apk) и архитектуру роутера.
 #
-#   uclient-fetch -q -O - https://raw.githubusercontent.com/PaWill68/openwrt-opera-proxy/master/scripts/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/PaWill68/openwrt-opera-proxy/master/scripts/install.sh | sh
 #
 # Параметры (переменные окружения):
-#   TAG=v1.30.0-2    конкретный релиз (по умолчанию: последний)
-#   LANGS="ru"       языки перевода через пробел; LANGS="" -- без перевода
-#   WITH_LUCI=0      только бинарник и сервис, без веб-интерфейса
-#   REPO=владелец/репозиторий   откуда брать релизы
-#   PKG_ARCH=<арх>   принудительно указать архитектуру пакетов (см. opkg print-architecture)
-# Пример:  uclient-fetch -q -O - <URL> | TAG=v1.30.0-2 WITH_LUCI=0 sh
+#   TAG=v1.30.0-2       конкретный релиз (по умолчанию: последний)
+#   LANGS="ru"          языки перевода через пробел; LANGS="" -- без перевода
+#   WITH_LUCI=0         только бинарник и сервис, без веб-интерфейса
+#   REPO=владелец/реп   откуда брать релизы
+#   PKG_ARCH=<арх>      принудительно указать архитектуру пакетов (см. opkg print-architecture)
+# Пример:  curl -fsSL <URL> | TAG=v1.30.0-2 WITH_LUCI=0 sh
 set -u
 
 REPO="${REPO:-PaWill68/openwrt-opera-proxy}"
@@ -23,22 +23,49 @@ say()  { printf '%s\n' "$*"; }
 warn() { printf 'Внимание: %s\n' "$*" >&2; }
 die()  { printf 'Ошибка: %s\n' "$*" >&2; rm -rf "$WORKDIR"; exit 1; }
 
-# fetch URL [ФАЙЛ] -- без ФАЙЛА пишет в stdout
-fetch() {
-    if command -v uclient-fetch >/dev/null 2>&1; then
-        if [ -n "${2:-}" ]; then uclient-fetch -q -O "$2" "$1"; else uclient-fetch -q -O - "$1"; fi
-    elif command -v wget >/dev/null 2>&1; then
-        if [ -n "${2:-}" ]; then wget -q -O "$2" "$1"; else wget -q -O - "$1"; fi
-    elif command -v curl >/dev/null 2>&1; then
-        if [ -n "${2:-}" ]; then curl -fsSL -o "$2" "$1"; else curl -fsSL "$1"; fi
-    else
-        die "нужен один из загрузчиков: uclient-fetch, wget или curl"
+command -v curl >/dev/null 2>&1 || die "нужен curl (установите его: opkg update && opkg install curl или apk add curl)"
+
+# Проверка, что скачанный файл пакета не пустой, не HTML/XML и является корректным архивом
+is_valid_package() {
+    f="$1"
+    [ -s "$f" ] || { warn "файл пустой: $f"; return 1; }
+
+    head_txt=$(head -c 128 "$f" 2>/dev/null | tr '[:upper:]' '[:lower:]')
+    case "$head_txt" in
+        *"<!doctype html"*|*"<html"*|*"<?xml"*)
+            warn "файл содержит HTML/XML вместо пакета: $f"
+            return 1
+            ;;
+    esac
+
+    b1=$(dd if="$f" bs=1 count=1 2>/dev/null | od -An -tu1 2>/dev/null | tr -d ' \n')
+    b2=$(dd if="$f" bs=1 skip=1 count=1 2>/dev/null | od -An -tu1 2>/dev/null | tr -d ' \n')
+    if [ -n "${b1:-}" ] && [ -n "${b2:-}" ]; then
+        if [ "$b1" != "31" ] || [ "$b2" != "139" ]; then
+            warn "неверная сигнатура архива (байты: $b1 $b2, ожидалось 31 139)"
+            return 1
+        fi
     fi
+
+    if command -v gzip >/dev/null 2>&1; then
+        gzip -t "$f" >/dev/null 2>&1 || { warn "ошибка целостности gzip: $f"; return 1; }
+    elif command -v tar >/dev/null 2>&1; then
+        tar -tzf "$f" >/dev/null 2>&1 || { warn "ошибка чтения tar.gz: $f"; return 1; }
+    fi
+
+    return 0
 }
 
-# Загрузчик нужен сразу: die внутри $(...) завершает только подоболочку, поэтому проверяем заранее.
-command -v uclient-fetch >/dev/null 2>&1 || command -v wget >/dev/null 2>&1 || command -v curl >/dev/null 2>&1 \
-    || die "нужен один из загрузчиков: uclient-fetch, wget или curl"
+# fetch URL [ФАЙЛ] -- без ФАЙЛА пишет в stdout
+fetch() {
+    url="$1"
+    out="${2:-}"
+    if [ -n "$out" ]; then
+        curl -fSL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o "$out" "$url"
+    else
+        curl -fSL --retry 3 --retry-delay 2 --connect-timeout 15 -H "Accept: application/vnd.github+json" "$url"
+    fi
+}
 
 # --- менеджер пакетов ---------------------------------------------------------------
 if command -v apk >/dev/null 2>&1; then
@@ -116,7 +143,7 @@ for u in $LIST; do
     f="$WORKDIR/${u##*/}"
     say "Загрузка: ${u##*/}"
     fetch "$u" "$f" || die "не удалось скачать $u"
-    [ -s "$f" ] || die "скачан пустой файл: ${u##*/}"
+    is_valid_package "$f" || die "скачан повреждённый или некорректный файл пакета: ${u##*/}"
     FILES="$FILES $f"
 done
 
