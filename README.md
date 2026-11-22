@@ -36,9 +36,8 @@
 нужные файлы из последнего релиза и устанавливает бинарник, веб-интерфейс LuCI и русский перевод.
 Выполните на роутере (по SSH):
 
-    uclient-fetch -q -O - https://raw.githubusercontent.com/PaWill68/openwrt-opera-proxy/master/scripts/install.sh | sh
+    curl -fsSL https://raw.githubusercontent.com/PaWill68/openwrt-opera-proxy/master/scripts/install.sh | sh
 
-Если `uclient-fetch` недоступен: `wget -q -O - <тот же адрес> | sh` или `curl -fsSL <тот же адрес> | sh`.
 
 Параметры передаются переменными окружения перед `sh`:
 
