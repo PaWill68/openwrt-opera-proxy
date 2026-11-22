@@ -59,20 +59,32 @@
 
 Вывод терминала при удачной установке:
 
-    root@router:~# uclient-fetch -q -O - https://raw.githubusercontent.com/PaWill68/openwrt-opera-proxy/master/scripts/install.sh | sh
+    root@router:~# curl -fsSL https://raw.githubusercontent.com/PaWill68/openwrt-opera-proxy/master/scripts/install.sh | sh
     Менеджер пакетов: opkg (.ipk), архитектура пакетов: aarch64_cortex-a53
-    Загрузка: opera-proxy_1.30.0-r1_aarch64_cortex-a53.ipk
-    Загрузка: luci-app-opera-proxy_1.30.0-r1_all.ipk
-    Загрузка: luci-i18n-opera-proxy-ru_1.30.0-r1_all.ipk
+      % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                     Dload  Upload  Total   Spent   Left   Speed
+    100  33349   0  33349   0      0  39351      0                              0
+    Загрузка: opera-proxy_1.31.0-r1_aarch64_cortex-a53.ipk
+      % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                     Dload  Upload  Total   Spent   Left   Speed
+      0      0   0      0   0      0      0      0           00:01              0
+    100  2.21M 100  2.21M   0      0 911.4k      0   00:02   00:02              0
+    Загрузка: luci-app-opera-proxy_1.31.0-r1_all.ipk
+      % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                     Dload  Upload  Total   Spent   Left   Speed
+      0      0   0      0   0      0      0      0                              0
+    100  10848 100  10848   0      0  10057      0   00:01   00:01              0
+    Загрузка: luci-i18n-opera-proxy-ru_1.31.0-r1_all.ipk
+      % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                     Dload  Upload  Total   Spent   Left   Speed
+      0      0   0      0   0      0      0      0                              0
+    100   4994 100   4994   0      0   3507      0   00:01   00:01              0
     Установка (opkg)...
-    Installing opera-proxy (1.30.0-r1) to root...
-    Installing luci-app-opera-proxy (1.30.0-r1) to root...
-    Installing luci-i18n-opera-proxy-ru (1.30.0-r1) to root...
-    Configuring opera-proxy.
-    Configuring luci-app-opera-proxy.
-    Configuring luci-i18n-opera-proxy-ru.
-    
-    Готово: opera-proxy v1.30.0 (aarch64_cortex-a53) установлен.
+    Package opera-proxy (1.31.0-r1) installed in root is up to date.
+    Package luci-app-opera-proxy (1.31.0-r1) installed in root is up to date.
+    Package luci-i18n-opera-proxy-ru (1.31.0-r1) installed in root is up to date.
+
+    Готово: opera-proxy v1.31.0 (aarch64_cortex-a53) установлен.
     Веб-интерфейс: LuCI -> Службы -> Opera Proxy (при необходимости обновите страницу через Ctrl+F5).
     Статус службы: /etc/init.d/opera-proxy status
     root@router:~# 
