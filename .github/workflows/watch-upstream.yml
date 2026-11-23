@@ -47,6 +47,6 @@ jobs:
           gh workflow run build.yml \
             -f "upstream_tag=$TAG" \
             -f pkg_release=1 \
-            -f upx_mode=auto \
+            -f upx_mode=always \
             -f publish=true
           echo "Запущена сборка для $TAG"
