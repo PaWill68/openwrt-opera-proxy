@@ -54,7 +54,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Проверки репозитория
         run: bash scripts/lint.sh
 
@@ -123,13 +123,13 @@ jobs:
           - { arch: x86_64,                   goarch: amd64,  gomips: "",        goarm: "",  upx: "false" }
     steps:
       - name: Исходники upstream
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ env.UPSTREAM_REPO }}
           ref: ${{ needs.prepare.outputs.upstream_tag }}
           path: upstream
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: upstream/go.mod
           cache: false
@@ -192,7 +192,7 @@ jobs:
             echo "UPX отключён для ${{ matrix.arch }}"
           fi
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: bin-${{ matrix.arch }}
           path: opera-proxy
@@ -218,11 +218,11 @@ jobs:
           - aarch64_cortex-a53
           - x86_64
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: bin-${{ matrix.arch }}
           path: opera-proxy/bin
@@ -257,7 +257,7 @@ jobs:
           REL: ${{ needs.prepare.outputs.release }}
         run: bash scripts/collect-packages.sh "bin/packages/${{ matrix.arch }}/${FEEDNAME}" "${{ matrix.arch }}" dist "${VER}-r${REL}"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: pkg-${{ matrix.owrt.ver }}-${{ matrix.arch }}
           path: dist/*
@@ -270,9 +270,9 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           pattern: pkg-*
           merge-multiple: true
