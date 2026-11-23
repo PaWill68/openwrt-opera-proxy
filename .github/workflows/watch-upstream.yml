@@ -1,0 +1,52 @@
+name: Watch upstream
+
+# Раз в день проверяет теги Alexey71/opera-proxy.
+# Если появился новый -- запускает build.yml, который
+# собирает пакеты и публикует Release.
+
+on:
+  schedule:
+    - cron: "0 4 * * *"   # ежедневно в 04:00 UTC
+  workflow_dispatch:       # ручной запуск кнопкой
+
+permissions:
+  contents: read
+
+env:
+  UPSTREAM_REPO: Alexey71/opera-proxy
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Сравнить теги upstream и свои
+        id: cmp
+        run: |
+          set -euo pipefail
+          UP=$(git ls-remote --tags --refs "https://github.com/${UPSTREAM_REPO}.git" 'v*' \
+                 | sed 's|.*refs/tags/||' | sort -V | tail -n1)
+          OWN=$(git tag -l 'v*' | sed 's/-[0-9]*$//' | sort -V | tail -n1)
+          echo "upstream=${UP:-<нет>}  собрано=${OWN:-<нет>}"
+          if [ -z "$UP" ] || [ "$UP" = "$OWN" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "tag=$UP" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Запустить сборку
+        if: steps.cmp.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.cmp.outputs.tag }}
+        run: |
+          gh workflow run build.yml \
+            -f "upstream_tag=$TAG" \
+            -f pkg_release=1 \
+            -f upx_mode=auto \
+            -f publish=true
+          echo "Запущена сборка для $TAG"
