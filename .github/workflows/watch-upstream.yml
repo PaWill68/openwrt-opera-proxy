@@ -32,8 +32,10 @@ jobs:
           OWN=$(git tag -l 'v*' | sed 's/-[0-9]*$//' | sort -V | tail -n1)
           echo "upstream=${UP:-<нет>}  собрано=${OWN:-<нет>}"
           if [ -z "$UP" ] || [ "$UP" = "$OWN" ]; then
+            echo "Обновления нет: upstream $UP == собрано $OWN"
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
+            echo "Обновление! upstream $UP != собрано $OWN"
             echo "changed=true" >> "$GITHUB_OUTPUT"
             echo "tag=$UP" >> "$GITHUB_OUTPUT"
           fi
