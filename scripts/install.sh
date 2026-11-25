@@ -25,37 +25,6 @@ die()  { printf 'Ошибка: %s\n' "$*" >&2; rm -rf "$WORKDIR"; exit 1; }
 
 command -v curl >/dev/null 2>&1 || die "нужен curl (установите его: opkg update && opkg install curl или apk add curl)"
 
-# Проверка, что скачанный файл пакета не пустой, не HTML/XML и является корректным архивом
-is_valid_package() {
-    f="$1"
-    [ -s "$f" ] || { warn "файл пустой: $f"; return 1; }
-
-    head_txt=$(head -c 128 "$f" 2>/dev/null | tr '[:upper:]' '[:lower:]')
-    case "$head_txt" in
-        *"<!doctype html"*|*"<html"*|*"<?xml"*)
-            warn "файл содержит HTML/XML вместо пакета: $f"
-            return 1
-            ;;
-    esac
-
-    b1=$(dd if="$f" bs=1 count=1 2>/dev/null | od -An -tu1 2>/dev/null | tr -d ' \n')
-    b2=$(dd if="$f" bs=1 skip=1 count=1 2>/dev/null | od -An -tu1 2>/dev/null | tr -d ' \n')
-    if [ -n "${b1:-}" ] && [ -n "${b2:-}" ]; then
-        if [ "$b1" != "31" ] || [ "$b2" != "139" ]; then
-            warn "неверная сигнатура архива (байты: $b1 $b2, ожидалось 31 139)"
-            return 1
-        fi
-    fi
-
-    if command -v gzip >/dev/null 2>&1; then
-        gzip -t "$f" >/dev/null 2>&1 || { warn "ошибка целостности gzip: $f"; return 1; }
-    elif command -v tar >/dev/null 2>&1; then
-        tar -tzf "$f" >/dev/null 2>&1 || { warn "ошибка чтения tar.gz: $f"; return 1; }
-    fi
-
-    return 0
-}
-
 # fetch URL [ФАЙЛ] -- без ФАЙЛА пишет в stdout
 fetch() {
     url="$1"
@@ -65,6 +34,77 @@ fetch() {
     else
         curl -fSL --retry 3 --retry-delay 2 --connect-timeout 15 -H "Accept: application/vnd.github+json" "$url"
     fi
+}
+
+# Базовая проверка заголовков/сигнатуры, когда нет SHA256SUMS или sha256sum
+check_package_format() {
+    f="$1"
+    name="${f##*/}"
+
+    if [ "$EXT" = ipk ]; then
+        b1=$(dd if="$f" bs=1 count=1 2>/dev/null | od -An -tu1 2>/dev/null | tr -d ' \n')
+        b2=$(dd if="$f" bs=1 skip=1 count=1 2>/dev/null | od -An -tu1 2>/dev/null | tr -d ' \n')
+        if [ -n "${b1:-}" ] && [ -n "${b2:-}" ]; then
+            if [ "$b1" != "31" ] || [ "$b2" != "139" ]; then
+                warn "неверная сигнатура ipk-архива $name (байты: $b1 $b2, ожидалось 31 139)"
+                return 1
+            fi
+        fi
+    elif [ "$EXT" = apk ]; then
+        magic3=$(head -c 3 "$f" 2>/dev/null)
+        if [ "$magic3" != "ADB" ]; then
+            warn "неверная сигнатура apk-файла $name (ожидалось 'ADB', получено: '$magic3')"
+            return 1
+        fi
+    fi
+
+    return 0
+}
+
+# Проверка пакета: сначала по SHA256SUMS, при отсутствии файла/утилиты -- по формату
+verify_package() {
+    f="$1"
+    name="${f##*/}"
+
+    [ -s "$f" ] || { warn "файл пустой: $name"; return 1; }
+
+    head_txt=$(head -c 128 "$f" 2>/dev/null | tr '[:upper:]' '[:lower:]')
+    case "$head_txt" in
+        *"<!doctype html"*|*"<html"*|*"<?xml"*)
+            warn "файл содержит HTML/XML вместо пакета: $name"
+            return 1
+            ;;
+    esac
+
+    if [ "$HAS_SHA" = 1 ]; then
+        expected=$(awk -v target="$name" '
+            {
+                file = $2
+                sub(/^\.\//, "", file)
+                sub(/^\*/, "", file)
+                if (file == target) {
+                    print tolower($1)
+                    exit
+                }
+            }
+        ' "$SHA_FILE")
+
+        if [ -n "${expected:-}" ]; then
+            actual=$(sha256sum "$f" 2>/dev/null | awk '{ print tolower($1) }')
+            if [ -z "${actual:-}" ]; then
+                warn "не удалось вычислить SHA-256 для $name"
+                return 1
+            fi
+            if [ "$actual" != "$expected" ]; then
+                warn "несовпадение SHA-256 для $name (ожидалось: $expected, получено: $actual)"
+                return 1
+            fi
+            return 0
+        fi
+        warn "хеш для $name не найден в SHA256SUMS -- проверяю формат файла"
+    fi
+
+    check_package_format "$f"
 }
 
 # --- менеджер пакетов ---------------------------------------------------------------
@@ -109,6 +149,15 @@ JSON=$(fetch "$API") || die "не удалось получить описани
 URLS=$(printf '%s\n' "$JSON" | grep -o '"browser_download_url": *"[^"]*"' | sed 's/.*"\(https:[^"]*\)"$/\1/' | grep "\\.$EXT\$")
 [ -n "$URLS" ] || die "в релизе нет файлов .$EXT (проверьте REPO/TAG; возможно, исчерпан лимит запросов GitHub API -- повторите позже)"
 
+SHA_URL=$(printf '%s\n' "$JSON" | grep -o '"browser_download_url": *"[^"]*"' | sed 's/.*"\(https:[^"]*\)"$/\1/' | grep '/SHA256SUMS$' | head -n 1)
+if [ -z "$SHA_URL" ]; then
+    if [ "$TAG" = latest ]; then
+        SHA_URL="https://github.com/$REPO/releases/latest/download/SHA256SUMS"
+    else
+        SHA_URL="https://github.com/$REPO/releases/download/$TAG/SHA256SUMS"
+    fi
+fi
+
 # pick РЕГУЛЯРНОЕ_ВЫРАЖЕНИЕ -- первый URL, имя файла которого подходит
 pick() { printf '%s\n' "$URLS" | grep -E "/$1\$" | head -n 1; }
 
@@ -136,14 +185,24 @@ if [ "$WITH_LUCI" = 1 ]; then
     done
 fi
 
-# --- загрузка и установка -----------------------------------------------------------
+# --- загрузка и проверка ------------------------------------------------------------
 rm -rf "$WORKDIR"; mkdir -p "$WORKDIR" || die "не удалось создать $WORKDIR"
+
+SHA_FILE="$WORKDIR/SHA256SUMS"
+HAS_SHA=0
+if fetch "$SHA_URL" "$SHA_FILE" >/dev/null 2>&1 && [ -s "$SHA_FILE" ] && command -v sha256sum >/dev/null 2>&1; then
+    HAS_SHA=1
+    say "Контрольные суммы: загружен SHA256SUMS"
+else
+    warn "SHA256SUMS недоступен или нет sha256sum -- будет выполнена базовая проверка формата пакетов"
+fi
+
 FILES=""
 for u in $LIST; do
     f="$WORKDIR/${u##*/}"
     say "Загрузка: ${u##*/}"
     fetch "$u" "$f" || die "не удалось скачать $u"
-    is_valid_package "$f" || die "скачан повреждённый или некорректный файл пакета: ${u##*/}"
+    verify_package "$f" || die "скачан повреждённый или некорректный файл пакета: ${u##*/}"
     FILES="$FILES $f"
 done
 
